@@ -159,4 +159,20 @@ class MemberRepositoryTest {
         }
 
     }
+
+    @Test
+    public void returnType() {
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 20);
+
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+        //List 는 조회가 되지 않아도  null이 아니라 빈객체 하나를 반납  size = 0;
+//        List<Member> result = memberRepository.findListByUsername("aaa");
+
+//        Member findMember = memberRepository.findMemberByUsername("sadad"); //단건은 조회 결과가 없을때 null 반납
+        Optional<Member> findMember = memberRepository.findOptionalByUsername("AAA"); //단건이 아닐땐 예외가 발생
+
+        System.out.println("findMember = " + findMember);
+    }
 }
