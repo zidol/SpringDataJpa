@@ -14,6 +14,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,8 @@ class MemberRepositoryTest {
     MemberRepository memberRepository;
     @Autowired
     TeamRepository teamRepository;
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void testMember() {
@@ -213,5 +217,26 @@ class MemberRepositoryTest {
         assertThat(page.getTotalPages()).isEqualTo(2);
         assertThat(page.isFirst()).isTrue();
         assertThat(page.hasNext()).isTrue();
+    }
+
+    @Test
+    public void bulkUpdate() {
+        //given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 19));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+
+        //when
+        int resultCount = memberRepository.bulkAgePlus(20);
+//        em.clear();     //영속성 context clear 해줘서 디비에 반영된것이 조회되게 해야함 clear 하지 않으면 영속성 컨텍스트에 있는 값을 불러와 40을 출력
+
+        List<Member> result = memberRepository.findByUsername("member5");
+        Member member5 = result.get(0);
+        System.out.println("member5 = " + member5);
+
+        //then
+        assertThat(resultCount).isEqualTo(3);
     }
 }
